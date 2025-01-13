@@ -1,13 +1,11 @@
 package pages;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
@@ -59,7 +57,117 @@ public class BasePage {
         Find(locator).click();
     }
 
-    //ir a un link text 
+
+    //Resalta un elemento con JS
+    public void bordearElemento(String locator) {
+        try {
+            WebElement element = Find(locator);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px dashed red'", element);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].style.background='#cc8f94'", element);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Desplaza hasta que el elemento sea visible.
+     */
+    public void scrollIntoView(String locator) {
+        WebElement element = Find(locator);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
+
+    /**
+     * Desplaza la pantalla según coordenadas.
+     */
+    public void scrollByCoordinates(int x, int y) {
+        ((JavascriptExecutor) driver).executeScript("window.scrollBy(" + x + "," + y + ")");
+    }
+
+    /**
+     * Cambia de pestaña
+     */
+    public void switchToWindow(int windowIndex) {
+        ArrayList<String> ventanas = new ArrayList<>(driver.getWindowHandles());
+        driver.switchTo().window(ventanas.get(windowIndex));
+    }
+
+    /**
+     * Espera que desaparezca un elemento
+     */
+    public boolean waitForElementToDisappear(String locator) {
+        try {
+            return wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(locator)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Verifica que un elemento sea clickeable
+     */
+    public boolean waitForElementClickable(String locator) {
+        try {
+            WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
+            return element.isEnabled();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica que la alerta este presente
+     */
+    public boolean isAlertPresent() {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Acepta la alerta si contiene cierto texto
+     */
+    public void acceptAlertIfContains(String texto) {
+        try {
+            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+            if (alert.getText().contains(texto)) {
+                alert.accept();
+            } else {
+                alert.dismiss();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean switchToFrameContainingElement(By locator) {
+        int frameCount = driver.findElements(By.tagName("iframe")).size();
+        for (int i = 0; i < frameCount; i++) {
+            try {
+                // Cambiar al frame actual
+                driver.switchTo().frame(i);
+
+                // Verificar si el elemento está presente en este frame
+                if (driver.findElements(locator).size() > 0) {
+                    return true; // Elemento encontrado
+                } else {
+                    // Volver al frame principal si el elemento no está presente
+                    driver.switchTo().defaultContent();
+                }
+            } catch (Exception e) {
+                System.out.println("Error al cambiar al frame " + i + ": " + e.getMessage());
+                System.out.println(e);
+                driver.switchTo().defaultContent(); // Asegurarse de volver al frame principal en caso de error
+            }
+        }
+        return false; // Elemento no encontrado en ningún frame
+    }
+
+    //ir a un link text
     public void goToLinkText(String linkText){
         driver.findElement(By.linkText(linkText)).click();
     }

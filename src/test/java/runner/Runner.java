@@ -11,7 +11,7 @@ import pages.BasePage;
 @CucumberOptions(
     features = "src/test/resources/features"
     ,glue = "steps"
-    ,tags = "@run_1"
+    ,tags = "@Bordear"
     ,plugin = {"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:","json:target/cucumber-reports.json"}
     ,monochrome = true
     )

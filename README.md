@@ -11,10 +11,10 @@ This project aims to establish a standard base for test automation with Selenium
 ## ✅ Technologies
 ### This project required:
 - [JDK java] version 1.8
-- [Gradle] version
-- [Selenium] version
-- [Cucumbre] version
-- [JUnit] version
+- [Gradle] 8.11
+- [Selenium] 4.10.0
+- [Cucumbre] 7.16.0
+- [JUnit] 5.10.0
 
 ## Project status
 <h4 align="center"> 🚧 Proyecto en construcción 🚧 </h4> 
